@@ -1,0 +1,7 @@
+*~
+/.idea/
+/approxgc.iml
+/.dub/
+/dub_save.json
+/approxgc
+/.sconsign.dblite

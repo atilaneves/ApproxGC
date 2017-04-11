@@ -1,0 +1,5 @@
+name "approxgc"
+description "A program to clean up Approx caches."
+authors "Russel Winder <russel@winder.org.uk>"
+copyright  "Copyright © 2017  Russel Winder"
+licence  "GPL-3.0"
