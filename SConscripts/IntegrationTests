@@ -1,0 +1,9 @@
+Import('environment')
+
+executable = environment.Command(
+    'main',
+    ['#/test-source/main.d', '#/source/main.d'],
+    '$DC -unittest -of $TARGET $SOURCES',
+    )
+
+Return('executable')

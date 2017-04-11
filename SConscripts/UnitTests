@@ -1,0 +1,5 @@
+Import('environment')
+
+unitTests = environment.Program('main', '#/source/main.d', DFLAGS=['-unittest'], DLINKFLAGS=['--main'])
+
+Return('unitTests')
