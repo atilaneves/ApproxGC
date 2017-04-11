@@ -5,3 +5,5 @@
 /dub_save.json
 /approxgc
 /.sconsign.dblite
+/Build/
+/approx-gc
