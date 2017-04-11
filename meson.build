@@ -22,13 +22,6 @@ project(
   default_options: ['buildtype=release']
 )
 
-compiler_flags = [
-]
-
-dependencies = [
-  # dependency('threads'),
-]
-
 sources = [
   'source/main.d',
 ]
@@ -40,15 +33,13 @@ test_sources = [
 
 executable('approx-gc',
            sources,
-           dependencies: dependencies,
-           d_args: compiler_flags,
-           install: false # true,
+           d_args: ['-O'],
+           install: true,
 )
 
 approx_gc_unit_test = executable('approx-gc-unit-test',
                                  sources,
-                                 dependencies: dependencies,
-                                 d_args: compiler_flags + ['-unittest'],
+                                 d_args: ['-unittest'],
                                  link_args: ['--main'],
 )
 
@@ -56,8 +47,7 @@ test('ApproxGC unit tests', approx_gc_unit_test)
 
 approx_gc_system_test = executable('approx-gc-system-test',
                                    test_sources,
-                                   dependencies: dependencies,
-                                   d_args: compiler_flags + ['-unittest'],
+                                   d_args: ['-unittest'],
                                    include_directories: include_directories('source'),
 )
 

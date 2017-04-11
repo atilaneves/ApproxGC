@@ -1,5 +1,39 @@
-name "approxgc"
+# ApproxGC — A cleanup program for Approx
+#
+# Copyright © 2017  Russel Winder <russel@winder.org.uk>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+name "approx-gc"
 description "A program to clean up Approx caches."
 authors "Russel Winder <russel@winder.org.uk>"
 copyright  "Copyright © 2017  Russel Winder"
 licence  "GPL-3.0"
+configuration "application" {
+              targetType "executable"
+              targetName "approx-gc"
+              mainSourceFile "source/main.d"
+}
+configuration "unittest" {
+              targetType "executable"
+              targetName "unit-tests"
+              sourceFiles "source/main.d"
+              dflags "-L--main"
+}
+configuration "integrationtest" {
+              targetType "executable"
+              targetName "integration-tests"
+              mainSourceFile "test-source/main.d"
+              sourceFiles "source/main.d"
+}
