@@ -1,7 +1,5 @@
 Import('environment')
 
-dir = Dir('.')
-print("DIR:%s"%dir.abspath)
 unitTests = environment.Program('main', 'source/main.d', DFLAGS=['-unittest'], DLINKFLAGS=['--main'])
 
 Return('unitTests')
