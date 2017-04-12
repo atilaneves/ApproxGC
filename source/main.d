@@ -22,6 +22,7 @@ import std.file: dirEntries, remove, FileException, SpanMode;
 version(unittest) {
 	import std.format: format;
 }
+import std.getopt: defaultGetoptPrinter, getopt;
 import std.path: baseName, chainPath, dirName, stripExtension;
 import std.range: zip;
 import std.regex: matchAll, matchFirst, regex;
@@ -104,17 +105,17 @@ bool debianPackageNumberLessThan(string a, string b) {
 	return epochlessLessThan(aVersionString, bVersionString);
 }
 
-auto createDeleteList(string[][string] groups) {
+auto createDeleteList(string[][string] groups, uint depth) {
 	return groups.byPair()
-	 .map!((Tuple!(string, string[]) a) => a[1].sort!debianPackageNumberLessThan()[0..$-1])
+	 .map!((Tuple!(string, string[]) a) => a[1].sort!debianPackageNumberLessThan()[0..$-depth])
 	 .array
 	 .joiner;
 }
 
-int performGC(string path) {
+int performGC(string path, uint depth) {
 	try {
 		auto data = groupsOfFilesAt(path);
-		auto deleteList = createDeleteList(data);
+		auto deleteList = createDeleteList(data, depth);
 		foreach (name; deleteList) {
 			chainPath(path, name).remove();
 		}
@@ -132,22 +133,22 @@ version(unittest) {
 	unittest {
 
 		foreach(Tuple!(string, string) item; [
-																					// Check epochs
-																					tuple("a_0:0.txt", "a_1:0.txt"),
-																					tuple("a_0:0.txt", "a_0:1.txt"),
-																					// Check general numbers.
-																					tuple("a_0.txt", "a_1.txt"),
-																					tuple("a_0.0.txt", "a_0.1.txt"),
-																					tuple("a_0.0.0.txt", "a_0.0.1.txt"),
-																					tuple("a_0.0.1.txt", "a_0.1.0.txt"),
-																					tuple("a_0.1.0txt", "a_1.0.0.txt"),
-																					tuple("a_0.0.9.txt", "a_0.0.10.txt"),
-																					// Check debian revisions.
-																					tuple("a_0-1.txt", "a_0-2.txt"),
-																					tuple("a_0.0-1.txt", "a_0.0-2.txt"),
-																					tuple("a_0.0.0-1.txt", "a_0.0.0-2.txt"),
-																					tuple("a_0-9.txt", "a_0-10.txt"),
-																					]) {
+			// Check epochs
+			tuple("a_0:0.txt", "a_1:0.txt"),
+			tuple("a_0:0.txt", "a_0:1.txt"),
+			// Check general numbers.
+			tuple("a_0.txt", "a_1.txt"),
+			tuple("a_0.0.txt", "a_0.1.txt"),
+			tuple("a_0.0.0.txt", "a_0.0.1.txt"),
+			tuple("a_0.0.1.txt", "a_0.1.0.txt"),
+			tuple("a_0.1.0txt", "a_1.0.0.txt"),
+			tuple("a_0.0.9.txt", "a_0.0.10.txt"),
+			// Check debian revisions.
+			tuple("a_0-1.txt", "a_0-2.txt"),
+			tuple("a_0.0-1.txt", "a_0.0-2.txt"),
+			tuple("a_0.0.0-1.txt", "a_0.0.0-2.txt"),
+			tuple("a_0-9.txt", "a_0-10.txt"),
+		]) {
 			assert(debianPackageNumberLessThan(item[0], item[1]), format("[%s, %s]", item[0], item[1]));
 		}
 
@@ -156,7 +157,21 @@ version(unittest) {
 else {
 
 	int main(string[] args) {
-		performGC("/var/cache/approx");
+		auto cacheDirectory = "/var/cache/approx";
+		auto depth = 1;
+		auto helpInformation = getopt(
+			args,
+			"depth|d", "The number of versions to keep, defaults to " ~ to!string(depth), &depth,
+			"cache-dir|c", "The absolute path to the cache, defaults to " ~ cacheDirectory, &cacheDirectory,
+			);
+		if (helpInformation.helpWanted || args.length != 1) {
+			defaultGetoptPrinter("approx-gc a programming for cleaning Approx caches.
+
+    approx-gc [options]
+", helpInformation.options);
+			return 0;
+		}
+		performGC(cacheDirectory, depth);
 		return 0;
 	}
 

@@ -25,7 +25,7 @@ import std.path: baseName, chainPath;
 
 import main: performGC;
 
-void writeFilesProcessAndCheckResult(string[] filenames, string[] result) {
+void writeFilesProcessAndCheckResult(string[] filenames, string[] result, uint depth) {
 	auto location = to!string(chainPath(tempDir(), "approx-gc").array);
 	location.mkdir();
 	scope (exit) { location.rmdirRecurse(); }
@@ -35,7 +35,7 @@ void writeFilesProcessAndCheckResult(string[] filenames, string[] result) {
 	auto startState = dirEntries(location, SpanMode.shallow).map!(a => a.baseName).array.sort();
 	auto filenamesSorted = filenames.sort();
 	assert(startState == filenamesSorted, startState.join(", ") ~ " == " ~ filenamesSorted.join(", "));
-	performGC(location);
+	performGC(location, depth);
 	auto endState = dirEntries(location, SpanMode.shallow).map!(a => a.baseName).array.sort();
 	auto resultSorted = result.sort();
 	assert(endState == resultSorted, endState.join(", ") ~ " == " ~ resultSorted.join(", "));
@@ -43,38 +43,65 @@ void writeFilesProcessAndCheckResult(string[] filenames, string[] result) {
 
 
 void checkASimpleDataSetNeededPruning() {
-	writeFilesProcessAndCheckResult([
+	writeFilesProcessAndCheckResult(
+																	[
 																	 "a_1.0.0.txt",
 																	 "a_1.0.1.txt",
 																	 "a_1.1.0.txt",
 																	 "b_1.0.0.txt",
 																	 "b_1.0.2.txt",
 																	 "b_1.2.1.txt",
-																	 ], [
-																			 "a_1.1.0.txt",
-																			 "b_1.2.1.txt",
-																			 ]
+																	 ],
+																	[
+																	 "a_1.1.0.txt",
+																	 "b_1.2.1.txt",
+																	 ],
+																	1,
+	);
+}
+
+void checkASimpleDataSetNeededPruningDepthTwo() {
+	writeFilesProcessAndCheckResult(
+																	[
+																	 "a_1.0.0.txt",
+																	 "a_1.0.1.txt",
+																	 "a_1.1.0.txt",
+																	 "b_1.0.0.txt",
+																	 "b_1.0.2.txt",
+																	 "b_1.2.1.txt",
+																	 ],
+																	[
+																	 "a_1.0.1.txt",
+																	 "a_1.1.0.txt",
+																	 "b_1.0.2.txt",
+																	 "b_1.2.1.txt",
+																	 ],
+																	2,
 																	);
 }
 
 void checkASimpleDataSetNeededNoPruning() {
-	writeFilesProcessAndCheckResult([
+	writeFilesProcessAndCheckResult(
+																	[
 																	 "a_1.1.0.txt",
 																	 "b_1.2.1.txt",
-																	 ], [
-																			 "a_1.1.0.txt",
-																			 "b_1.2.1.txt",
-																			 ]
+																	 ],
+																	[
+																	 "a_1.1.0.txt",
+																	 "b_1.2.1.txt",
+																	 ],
+																	1,
 																	);
 }
 
 void checkAnEmptyDataset() {
-	writeFilesProcessAndCheckResult([], []);
+	writeFilesProcessAndCheckResult([], [], 1);
 }
 
 int main(string[] args) {
 
 	checkASimpleDataSetNeededPruning();
+	checkASimpleDataSetNeededPruningDepthTwo();
 	checkASimpleDataSetNeededNoPruning();
 	checkAnEmptyDataset();
 
