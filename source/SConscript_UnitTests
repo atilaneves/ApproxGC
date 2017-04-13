@@ -1,0 +1,7 @@
+Import('testEnvironment')
+
+ut_main = testEnvironment.UnitThreadedMakeMain('ut_main.d')
+
+unitTests = testEnvironment.Program('main', ['main.d', ut_main], DFLAGS=['-unittest'])
+
+Return('unitTests')

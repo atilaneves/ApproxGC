@@ -1,5 +1,0 @@
-Import('environment')
-
-executable = environment.Program('main', 'source/main.d', DFLAGS=['-O'])
-
-Return('executable')

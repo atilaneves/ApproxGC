@@ -1,27 +1,29 @@
-buildDirectory = 'Build'
+import os
+import subprocess
 
 environment = Environment(
-    tools=['ldc', 'link'],
+    tools=['dub', 'ldc', 'link'],
 )
 
-Export('environment')
+testEnvironment = environment.Clone()
+testEnvironment.AddDubLibrary('unit-threaded', '0.7.13')
 
-release = SConscript('SConscripts/Release', variant_dir=buildDirectory + '/Release', duplicate=0)
-VariantDir(buildDirectory + '/Release/source', '#/source', duplicate=0)
+
+buildDirectory = 'Build'
+
+release = SConscript('source/SConscript_Release', variant_dir=buildDirectory + '/Release', duplicate=0, exports='environment')
 Alias('release', release)
 
-unitTests = SConscript('SConscripts/UnitTests', variant_dir=buildDirectory + '/UnitTests', duplicate=0)
-VariantDir(buildDirectory + '/UnitTests/source', '#/source', duplicate=0)
-Alias('unitTests',unitTests)
-Command('run_unitTests', unitTests, './$SOURCE')
+unitTests = SConscript('source/SConscript_UnitTests', variant_dir=buildDirectory + '/UnitTests', duplicate=0, exports='testEnvironment')
+Alias('unittests',unitTests)
+Command('run_unittests', unitTests, './$SOURCE')
 
-integrationTests = SConscript('SConscripts/IntegrationTests', variant_dir=buildDirectory + '/IntegrationTests', duplicate=0)
-VariantDir(buildDirectory + '/IntegrationTests/source', '#/source', duplicate=0)
-Alias('integrationTests', integrationTests)
-Command('run_integrationTests', integrationTests, './$SOURCE')
+integrationTests = SConscript('test-source/SConscript_IntegrationTests', variant_dir=buildDirectory + '/IntegrationTests', duplicate=0, exports='testEnvironment')
+Alias('integrationtests', integrationTests)
+Command('run_integrationtests', integrationTests, './$SOURCE')
 
 Alias('build-all', [release, unitTests, integrationTests])
 
-Default(['run_unitTests', 'run_integrationTests'])
+Default(['run_unittests', 'run_integrationtests'])
 
-Clean('.', buildDirectory)
+Clean('.', [buildDirectory, 'approx-gc', 'unit-tests', 'integration-tests', 'ut_main.d'])
