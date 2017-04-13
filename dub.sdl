@@ -31,7 +31,7 @@ configuration "unittest" {
               preBuildCommands "dub run unit-threaded -c gen_ut_main -- -f ut_main.d"
               mainSourceFile "ut_main.d"
               sourceFiles "source/main.d"
-              dependency "unit-threaded" version="~>0.7.13"
+              dependency "unit-threaded" version="~>0.7.14"
 }
 configuration "integrationtest" {
               targetType "executable"
@@ -39,5 +39,5 @@ configuration "integrationtest" {
               preBuildCommands "dub run unit-threaded -c gen_ut_main -- -f ut_main.d"
               mainSourceFile "ut_main.d"
               sourceFiles "test-source/main.d" "source/main.d"
-              dependency "unit-threaded" version="~>0.7.13"
+              dependency "unit-threaded" version="~>0.7.14"
 }
