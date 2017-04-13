@@ -31,6 +31,12 @@ test_sources = [
   'source/main.d',
 ]
 
+
+unitThreadedDirectory = '/home/users/russel/.dub/packages/unit-threaded-0.7.13/unit-threaded'
+
+ldcLibraryDirectory = unitThreadedDirectory + '/.dub/build/library-release-linux.posix-x86_64-ldc_2071-B9968E589EC82218E5BC3814938C922A'
+
+
 executable('approx-gc',
            sources,
            d_args: ['-O'],
@@ -40,7 +46,8 @@ executable('approx-gc',
 approx_gc_unit_test = executable('approx-gc-unit-test',
                                  sources,
                                  d_args: ['-unittest'],
-                                 link_args: ['--main'],
+                                 link_args: ['-main', '-L-L' + ldcLibraryDirectory, '-L-lunit-threaded'],
+                                 include_directories: [include_directories(unitThreadedDirectory + '/source')],
 )
 
 test('ApproxGC unit tests', approx_gc_unit_test)
@@ -48,7 +55,8 @@ test('ApproxGC unit tests', approx_gc_unit_test)
 approx_gc_system_test = executable('approx-gc-system-test',
                                    test_sources,
                                    d_args: ['-unittest'],
-                                   include_directories: include_directories('source'),
+                                   link_args: ['-L-L' + ldcLibraryDirectory, '-L-lunit-threaded'],
+                                   include_directories: [include_directories('source'), include_directories(unitThreadedDirectory + '/source')],
 )
 
 test('ApproxGC system tests', approx_gc_system_test)

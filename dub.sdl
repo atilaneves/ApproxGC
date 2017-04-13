@@ -28,12 +28,16 @@ configuration "application" {
 configuration "unittest" {
               targetType "executable"
               targetName "unit-tests"
+              preBuildCommands "dub run unit-threaded -c gen_ut_main -- -f ut_main.d"
+              mainSourceFile "ut_main.d"
               sourceFiles "source/main.d"
-              dflags "-L--main"
+              dependency "unit-threaded" version="~>0.7.13"
 }
 configuration "integrationtest" {
               targetType "executable"
               targetName "integration-tests"
-              mainSourceFile "test-source/main.d"
-              sourceFiles "source/main.d"
+              preBuildCommands "dub run unit-threaded -c gen_ut_main -- -f ut_main.d"
+              mainSourceFile "ut_main.d"
+              sourceFiles "test-source/main.d" "source/main.d"
+              dependency "unit-threaded" version="~>0.7.13"
 }
