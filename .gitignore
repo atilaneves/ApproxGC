@@ -7,3 +7,5 @@
 /.sconsign.dblite
 /Build/
 /approx-gc
+ut_main.d
+/dub.selections.json
