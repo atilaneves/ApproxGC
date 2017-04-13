@@ -129,30 +129,32 @@ int performGC(string path, uint depth) {
 
 
 version(unittest) {
+	import unit_threaded;
 
-	unittest {
+	@Values(
+					// Check epochs
+					tuple("a_0:0.txt", "a_1:0.txt"),
+					tuple("a_0:0.txt", "a_0:1.txt"),
+					// Check general numbers.
+					tuple("a_0.txt", "a_1.txt"),
+					tuple("a_0.0.txt", "a_0.1.txt"),
+					tuple("a_0.0.0.txt", "a_0.0.1.txt"),
+					tuple("a_0.0.1.txt", "a_0.1.0.txt"),
+					tuple("a_0.1.0txt", "a_1.0.0.txt"),
+					tuple("a_0.0.9.txt", "a_0.0.10.txt"),
+					// Check debian revisions.
+					tuple("a_0-1.txt", "a_0-2.txt"),
+					tuple("a_0.0-1.txt", "a_0.0-2.txt"),
+					tuple("a_0.0.0-1.txt", "a_0.0.0-2.txt"),
+					tuple("a_0-9.txt", "a_0-10.txt"),
+					// Error for testing.
+					//tuple("a_0-10.txt", "a_0-9.txt"),
+					)
+	 unittest {
+		 auto item = getValue!(Tuple!(string, string));
+		 assert(debianPackageNumberLessThan(item[0], item[1]), format("[%s, %s]", item[0], item[1]));
+	 }
 
-		foreach(Tuple!(string, string) item; [
-			// Check epochs
-			tuple("a_0:0.txt", "a_1:0.txt"),
-			tuple("a_0:0.txt", "a_0:1.txt"),
-			// Check general numbers.
-			tuple("a_0.txt", "a_1.txt"),
-			tuple("a_0.0.txt", "a_0.1.txt"),
-			tuple("a_0.0.0.txt", "a_0.0.1.txt"),
-			tuple("a_0.0.1.txt", "a_0.1.0.txt"),
-			tuple("a_0.1.0txt", "a_1.0.0.txt"),
-			tuple("a_0.0.9.txt", "a_0.0.10.txt"),
-			// Check debian revisions.
-			tuple("a_0-1.txt", "a_0-2.txt"),
-			tuple("a_0.0-1.txt", "a_0.0-2.txt"),
-			tuple("a_0.0.0-1.txt", "a_0.0.0-2.txt"),
-			tuple("a_0-9.txt", "a_0-10.txt"),
-		]) {
-			assert(debianPackageNumberLessThan(item[0], item[1]), format("[%s, %s]", item[0], item[1]));
-		}
-
-	}
 }
 else {
 
