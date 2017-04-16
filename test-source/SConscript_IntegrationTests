@@ -2,10 +2,10 @@ Import('testEnvironment')
 
 sources = ['main_test.d', '#/source/main.d']
 
-ut_main = testEnvironment.UnitThreadedMakeMain('ut_main.d')
+ut_main = testEnvironment['LIBRARIES']['unit_threaded'].UnitThreadedMakeMain('ut_main.d')
 
 executable = testEnvironment.Command(
-    'main',
+    'integration-test',
     sources + [ut_main],
     '$DC $_DINCFLAGS $_DVERFLAGS $_DDEBUGFLAGS $_DFLAGS -unittest -of$TARGET $DLINKFLAGS $__DRPATH $SOURCES $_DLIBDIRFLAGS $_DLIBFLAGS',
     )
