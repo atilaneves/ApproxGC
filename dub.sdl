@@ -20,24 +20,30 @@ description "A program to clean up Approx caches."
 authors "Russel Winder <russel@winder.org.uk>"
 copyright  "Copyright © 2017  Russel Winder"
 licence  "GPL-3.0"
+
+targetPath "bin"
+
 configuration "application" {
               targetType "executable"
               targetName "approx-gc"
               mainSourceFile "source/main.d"
 }
+
 configuration "unittest" {
               targetType "executable"
               targetName "unit-tests"
-              preBuildCommands "dub run unit-threaded -c gen_ut_main -- -f ut_main.d"
-              mainSourceFile "ut_main.d"
+              preBuildCommands "dub run unit-threaded -c gen_ut_main -- -f generated/ut_unittest_main.d source"
+              mainSourceFile "generated/ut_unittest_main.d"
               sourceFiles "source/main.d"
-              dependency "unit-threaded" version="~>0.7.14"
+              dependency "unit-threaded" version="~>0.7.15"
 }
+
 configuration "integrationtest" {
               targetType "executable"
               targetName "integration-tests"
-              preBuildCommands "dub run unit-threaded -c gen_ut_main -- -f ut_main.d"
-              mainSourceFile "ut_main.d"
-              sourceFiles "test-source/main.d" "source/main.d"
-              dependency "unit-threaded" version="~>0.7.14"
+              preBuildCommands "dub run unit-threaded -c gen_ut_main -- -f generated/ut_integrationtest_main.d test-source"
+              mainSourceFile "generated/ut_integrationtest_main.d"
+              importPaths "test-source"
+              sourceFiles "test-source/main_test.d" "source/main.d"
+              dependency "unit-threaded" version="~>0.7.15"
 }

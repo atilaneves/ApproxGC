@@ -1,6 +1,6 @@
 Import('testEnvironment')
 
-sources = ['main.d', '#/source/main.d']
+sources = ['main_test.d', '#/source/main.d']
 
 ut_main = testEnvironment.UnitThreadedMakeMain('ut_main.d')
 

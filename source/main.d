@@ -19,9 +19,6 @@ import std.algorithm: filter, joiner, map, sort;
 import std.array: array, byPair, split;
 import std.conv: to;
 import std.file: dirEntries, remove, FileException, SpanMode;
-version(unittest) {
-	import std.format: format;
-}
 import std.getopt: defaultGetoptPrinter, getopt;
 import std.path: baseName, chainPath, dirName, stripExtension;
 import std.range: zip;
@@ -149,10 +146,13 @@ version(unittest) {
 					tuple("a_0-9.txt", "a_0-10.txt"),
 					// Error for testing.
 					//tuple("a_0-10.txt", "a_0-9.txt"),
+					// Some real examples from a real cache.
+					tuple("zlib1g-dev_1.2.8.dfsg-2+b1_amd64.deb", "zlib1g-dev_1.2.8.dfsg-5_amd64.deb"),
+					tuple("mplayer_1.3.0-1_amd64.deb", "mplayer_1.3.0-5_amd64.deb"),
 					)
 	 unittest {
 		 auto item = getValue!(Tuple!(string, string));
-		 assert(debianPackageNumberLessThan(item[0], item[1]), format("[%s, %s]", item[0], item[1]));
+		 assert(debianPackageNumberLessThan(item[0], item[1]));
 	 }
 
 }

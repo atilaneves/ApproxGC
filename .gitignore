@@ -7,7 +7,6 @@
 /.sconsign.dblite
 /Build/
 /approx-gc
-ut_main.d
+/generated/
 /dub.selections.json
-/unit-tests
-/integration-tests
+/bin/
