@@ -41,9 +41,12 @@ configuration "unittest" {
 configuration "integrationtest" {
               targetType "executable"
               targetName "integration-tests"
-              preBuildCommands "dub run unit-threaded -c gen_ut_main -- -f generated/ut_integrationtest_main.d test-source"
+              // currently not working (delete test-source from package name)
+              //preBuildCommands "dub run unit-threaded -c gen_ut_main -- -f generated/ut_integrationtest_main.d test-source"
               mainSourceFile "generated/ut_integrationtest_main.d"
               importPaths "test-source"
               sourceFiles "test-source/main_test.d" "source/main.d"
               dependency "unit-threaded" version="~>0.7.15"
+              versions "integrationtest"
+              dflags "-unittest"
 }

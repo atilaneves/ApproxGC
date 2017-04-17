@@ -157,6 +157,7 @@ version(unittest) {
 	 }
 
 }
+else version(integrationtest) {}
 else {
 
 	int main(string[] args) {
