@@ -20,13 +20,14 @@ import std.array: array, join;
 import std.conv: to;
 import std.file: dirEntries, mkdir, rmdirRecurse, tempDir, write, SpanMode;
 import std.path: baseName, chainPath;
+import std.process: thisProcessID, thisThreadID;
 
 import unit_threaded;
 
 import main: performGC;
 
 void writeFilesProcessAndCheckResult(string[] filenames, string[] result, uint depth) {
-	auto location = to!string(chainPath(tempDir(), "approx-gc").array);
+	auto location = to!string(chainPath(tempDir(), "approx-gc_" ~ to!string(thisProcessID()) ~ "_" ~ to!string(thisThreadID())).array);
 	location.mkdir();
 	scope (exit) { location.rmdirRecurse(); }
 	foreach (name; filenames) {
